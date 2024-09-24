@@ -15,10 +15,12 @@ class Reservations
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('user')]
     private ?Users $user_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('user')]
     private ?Events $event_id = null;
 
     public function getId(): ?int
