@@ -19,18 +19,18 @@ class Users
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['user.index', 'user.show', 'event.index'])]
+    #[Groups(['user.index', 'user.show', 'user.profile', 'event.index'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(length: 90, nullable: true)]
-    #[Groups(['user.index', 'user.show'])]
+    #[Groups(['user.index', 'user.show', 'user.profile'])]
     private ?string $class = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user.index', 'user.show'])]
+    #[Groups(['user.index', 'user.show', 'user.profile'])]
     private ?string $status = null;
 
     /**
@@ -49,6 +49,7 @@ class Users
     private ?string $token = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user.profile'])]
     private ?string $mail = null;
 
     public function __construct()

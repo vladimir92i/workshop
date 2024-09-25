@@ -83,7 +83,7 @@ symfony local:server:start
 "token" : *string*
 
 
-### Connexion
+### Deconnexion
 `/api/user/deconnexion`
 **Arguments :**
 "username" : *string*
@@ -91,3 +91,19 @@ symfony local:server:start
 
 **Return :**
 "succes" : "Disconnected"
+
+### Edit
+`/api/user/Edit`
+**Arguments :**
+"token" : *string*
+"mail" : *string*
+"password" : *string*
+"mail" : *string* - Option
+"username" : *siring* - Option
+"new_password" : *siring* - Option
+
+**Return :**
+"username" : *string*
+"class" : *string*
+"organization" : *string*
+"mail" : *string*

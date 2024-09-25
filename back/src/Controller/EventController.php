@@ -35,7 +35,7 @@ class EventController extends AbstractController
         $token = $request->query->get('token');
       
         if (!Token::Permission($token, 'Organization', $entityManager)){
-            return $this->json(['access_denied' => 'Bad permissions']);
+            return $this->json(['unauthorized' => 'Bad permissions'], 401);
         }
 
         $title = $request->query->get('title');
@@ -55,19 +55,19 @@ class EventController extends AbstractController
             $event = new Events();
             $event->setTitle($title);
         } else {
-            return $this->json(['error' => 'bad title resquest']);
+            return $this->json(['error' => 'bad title resquest'], 400);
         }
 
         if ($creator_entity != NULL) {
             $event->setCreatorId($creator_entity);
         } else {
-            return $this->json(['error' => 'bad creator_id resquest']);
+            return $this->json(['error' => 'bad creator_id resquest'], 400);
         }
 
         if ($description != NULL) {
             $event->setDescription($description);
         } else {
-            return $this->json(['error' => 'bad description resquest']);
+            return $this->json(['error' => 'bad description resquest'], 400);
         }
         
         if ($max_capacity != NULL && is_int($max_capacity)) {
@@ -81,6 +81,6 @@ class EventController extends AbstractController
         $entityManager->persist($event);
         $entityManager->flush();
 
-        return $this->json(['succes' => 'event created']);
+        return $this->json(['succes' => 'event created'], 201);
     }
 }

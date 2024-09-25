@@ -47,13 +47,11 @@ class UserController extends AbstractController
         if ($username != NULL && is_string($username)) {
             $user = new Users();
             $user->setUsername($username);
-        } else {
-            return $this->json(['error' => 'Bad username resquest']);
         }
 
         if(filter_var($mail, FILTER_VALIDATE_EMAIL)) {
             if($entityManager->getRepository(Users::class)->findOneBy(['mail' => $mail])){
-                return $this->json(['error' => 'Mail already use']);
+                return $this->json(['error' => 'Mail already use'], 400);
             }
             $user->setMail($mail);
             }
@@ -73,7 +71,7 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json(['succes' => 'User created']);
+        return $this->json(['succes' => 'User created'], 201);
     }
 
     #[Route('/api/user/connexion')]
@@ -105,13 +103,14 @@ class UserController extends AbstractController
 
         return $this->json(['token' => $token]);
     }
+
     #[Route('/api/user/deconnexion')]
     public function deconnexion(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
         $token = $request->query->get('token');
         $user = Token::CheckUser($token, $entityManager);
         if (!$user){
-            return $this->json(['error' => 'Token not found']);
+            return $this->json(['error' => 'Token not found'], 400);
         }
 
         $user->setToken(NULL);
@@ -119,6 +118,46 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json(['success' => "Disconnected"]);
+        return $this->json(['success' => "Disconnected"], 200);
+    }
+
+    #[Route('/api/user/edit')]
+    public function edit(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {   
+        $token = $request->query->get('token');
+        $id = $request->query->get('id');
+        $password = $request->query->get('password');
+
+        $user = Token::CheckUser($token, $entityManager);
+        if (!$user){
+            return $this->json(['error' => 'Token not found'], 400);
+        } else if ($user->getId() != $id){
+            return $this->json(['error' => 'Bad permissions'], 401);
+        } else if (!password_verify($password.'epsi', $user->getPassword())){
+            return $this->json(['error' => 'Bad password'], 401);
+        }
+        
+        $new_password = $request->query->get('new_password');
+        $mail = $request->query->get('mail');
+        $username = $request->query->get('username');
+
+        if($new_password != NULL){
+            $password_hashed = password_hash($new_password . 'epsi', PASSWORD_BCRYPT, ["cost" => 4]);
+            $user->setPassword($password_hashed);
+        }
+
+        if($mail != NULL && filter_var($mail, FILTER_VALIDATE_EMAIL)){
+            $user->setMail($mail);
+        }
+        if($username != NULL){
+            $user->setUsername($username);
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->json($user, 200, [], [
+            'groups' => ['user.profile']
+        ]);
     }
 }
