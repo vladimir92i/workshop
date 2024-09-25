@@ -45,6 +45,12 @@ class Users
     #[ORM\OneToMany(targetEntity: Events::class, mappedBy: 'creator_id')]
     private Collection $events;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $mail = null;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -160,6 +166,30 @@ class Users
                 $event->setCreatorId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function gettoken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function settoken(?string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getMail(): ?string
+    {
+        return $this->mail;
+    }
+
+    public function setMail(string $mail): static
+    {
+        $this->mail = $mail;
 
         return $this;
     }

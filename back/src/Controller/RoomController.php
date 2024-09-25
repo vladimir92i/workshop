@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RoomController extends AbstractController
 {
     #[Route('api/room/index')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager): JsonResponse
     {
         $rooms = $entityManager->getRepository(Room::class)->findAll();
 
@@ -25,7 +25,7 @@ class RoomController extends AbstractController
     }
     
     #[Route('api/room/{id}')]
-    public function show(EntityManagerInterface $entityManager, int $id): Response
+    public function show(EntityManagerInterface $entityManager, int $id): JsonResponse
     {
         $room = $entityManager->getRepository(Room::class)->find($id);
 
