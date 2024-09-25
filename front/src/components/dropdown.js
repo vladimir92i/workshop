@@ -1,6 +1,6 @@
 import Dropdown from 'react-bootstrap/Dropdown';
 
-function DropDown({ etages }) {
+function DropDown() {
   return (
     <Dropdown>
       <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -8,9 +8,9 @@ function DropDown({ etages }) {
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        {etages.map((value) => (
-          <Dropdown.Item>{value} </Dropdown.Item>
-        ))}
+        <Dropdown.Item> RDC </Dropdown.Item>
+        <Dropdown.Item>Etage 1</Dropdown.Item>
+        <Dropdown.Item>Etage 2</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
