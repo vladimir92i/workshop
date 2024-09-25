@@ -29,10 +29,11 @@ class EventController extends AbstractController
     }
     
     #[Route('/api/event/create', name: 'api_event_create')]
+
     public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
         $token = $request->query->get('token');
-
+      
         if (!Token::Permission($token, 'Organization', $entityManager)){
             return $this->json(['access_denied' => 'Bad permissions']);
         }
