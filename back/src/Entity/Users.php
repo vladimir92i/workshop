@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,18 +15,22 @@ class Users
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user.show'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['user.index', 'user.show', 'event.index'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(length: 90, nullable: true)]
+    #[Groups(['user.index', 'user.show'])]
     private ?string $class = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user.index', 'user.show'])]
     private ?string $status = null;
 
     /**

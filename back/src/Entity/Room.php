@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use App\Repository\RoomRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,21 +15,26 @@ class Room
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("room.show")]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(["room.index", "room.show"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 15)]
+    #[Groups("room.show")]
     private ?string $floor = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups("room.show")]
     private ?int $capacity = null;
 
     /**
      * @var Collection<int, Events>
      */
     #[ORM\OneToMany(targetEntity: Events::class, mappedBy: 'room_id')]
+    
     private Collection $events;
 
     public function __construct()
