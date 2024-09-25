@@ -5,7 +5,8 @@ function App() {
   const [connected,setConnected] = useState()
   return (
     <div className="flex justify-center">
-      {connected ? <Floor /> : <Connexion />}
+      {/* {connected ? <Floor /> : <Connexion />} */}
+      <Floor/>
     </div>
   );
 }
