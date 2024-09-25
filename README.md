@@ -141,4 +141,14 @@ symfony local:server:start
     "end_at" : *datetime Y-m-d H:i:s*
 
 **Return :**
-    "succes" => "event created"
+    "succes" => "Event created"
+
+    
+### Inscription (Reservation)
+`/api/event/inscription`
+**Arguments :**
+    "token" : *string*
+    "event_id" : *integer*
+
+**Return :**
+    "succes" => "Reservation complete"
