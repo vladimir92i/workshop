@@ -16,41 +16,43 @@ class Events
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("event.index")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?bool $validation = null;
     
     #[ORM\ManyToOne]
+    #[Groups(["event.info"])]
     private ?Users $control_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?Users $creator_id = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?int $max_capacity = null;
 
     #[ORM\Column]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?\DateTimeImmutable $start_at = null;
 
     #[ORM\Column]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?\DateTimeImmutable $end_at = null;
 
     #[ORM\Column]
-    #[Groups("event.index")]
+    #[Groups(["event.index", "event.show"])]
     private ?\DateTimeImmutable $created_at = null;
 
     /**
@@ -58,8 +60,7 @@ class Events
      */
     #[ORM\OneToMany(targetEntity: Reservations::class, mappedBy: 'event_id', orphanRemoval: true)]
     private Collection $reservations;
-    
-    #[Groups("room")]
+
     #[ORM\ManyToOne(inversedBy: 'events')]
     private ?Room $room_id = null;
 

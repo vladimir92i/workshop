@@ -2,20 +2,24 @@
 
 namespace App\Controller;
 
+use App\Token;
+
 use App\Entity\Events;
+use App\Entity\Users;
+
 use Doctrine\ORM\EntityManagerInterface;
 
-use Symfony\Component\Serializer\SerializerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class EventController extends AbstractController
 {
-    #[Route('/api/event/index', name: 'api_event_index')]
-    public function index(EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
+    #[Route('/api/events', name: 'api_event_index')]
+    public function index(EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {   
         $events = $entityManager->getRepository(Events::class)->findAll();
 
@@ -25,22 +29,57 @@ class EventController extends AbstractController
     }
     
     #[Route('/api/event/create', name: 'api_event_create')]
-    public function create(): JsonResponse
+    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
+        $token = $request->query->get('token');
 
-        $event = new Events();
-        $event->setTitle('Nom de l\'event');
-        $event->setDescription('Blablablabla');
-        $event->setValidation(NULL);
-        $event->setMax_Capacity(90);
-        // $event->setStartAt()
+        if (!Token::Permission($token, 'Organization', $entityManager)){
+            return $this->json(['access_denied' => 'Bad permissions']);
+        }
 
-        // tell Doctrine you want to (eventually) save the event (no queries yet)
+        $title = $request->query->get('title');
+        $creator_id = $request->query->get('creator_id');
+        $description = $request->query->get('description');
+        $max_capacity = $request->query->get('max_capacity');
+        $start_at = $request->query->get('start_at');
+        $end_at = $request->query->get('end_at');
+
+        $creator_entity = $entityManager->getRepository(Users::class)->find($creator_id);
+
+        $start_at = date_create_immutable_from_format('Y-m-d H:i:s', $start_at);
+        $end_at = date_create_immutable_from_format('Y-m-d H:i:s', $end_at);
+        $created_at =  date_create_immutable("now");
+
+        if ($title != NULL && is_string($title)) {
+            $event = new Events();
+            $event->setTitle($title);
+        } else {
+            return $this->json(['error' => 'bad title resquest']);
+        }
+
+        if ($creator_entity != NULL) {
+            $event->setCreatorId($creator_entity);
+        } else {
+            return $this->json(['error' => 'bad creator_id resquest']);
+        }
+
+        if ($description != NULL) {
+            $event->setDescription($description);
+        } else {
+            return $this->json(['error' => 'bad description resquest']);
+        }
+        
+        if ($max_capacity != NULL && is_int($max_capacity)) {
+            $event->setMaxCapacity($max_capacity);
+        }
+
+        $event->setStartAt($start_at);
+        $event->setEndAt($end_at);
+        $event->setCreatedAt($created_at);
+
         $entityManager->persist($event);
-
-        // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return $this->json(['succes' => 'event create']);
+        return $this->json(['succes' => 'event created']);
     }
 }
