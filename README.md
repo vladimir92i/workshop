@@ -40,7 +40,7 @@ symfony local:server:start
 # Requêtes API
 ## User
 ### Index
-`/users`
+`/api/users`
 **Arguments :**
 /
 
@@ -52,7 +52,7 @@ symfony local:server:start
 ]
 
 ### Show
-`/users/show/{id}`
+`/api/users/show/{id}`
 **Arguments :**
 /
 
@@ -107,3 +107,38 @@ symfony local:server:start
 "class" : *string*
 "organization" : *string*
 "mail" : *string*
+
+## Event
+### Index
+`/api/events`
+**Arguments :**
+/
+
+**Return :**
+*Array* [
+    "id" : *integer*
+    "title" : *string*
+    "validation" : *string* or *null*
+    "creator_id" : *Array* [
+                            "username" : *string*
+                    ]
+    "max_capacity" : *integer* or *null*
+    "start_at" : *datetime AAAA-MM-JJThh-mm-ss+01:00*
+    "end_at" : *datetime AAAA-MM-JJThh-mm-ss+01:00*
+    "created_at" : *datetime AAAA-MM-JJThh-mm-ss+01:00*
+    "countReservations": *Integer*
+]
+
+### Create
+`/api/event/create`
+**Arguments :**
+    "token" : *string*
+    "id" : *integer*
+    "title" : *string*
+    "description" : *string*
+    "max_capacity" : *string* - optionnal
+    "start_at" : *datetime Y-m-d H:i:s*
+    "end_at" : *datetime Y-m-d H:i:s*
+
+**Return :**
+    "succes" => "event created"

@@ -29,7 +29,6 @@ class EventController extends AbstractController
     }
     
     #[Route('/api/event/create', name: 'api_event_create')]
-
     public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
         $token = $request->query->get('token');
@@ -45,7 +44,7 @@ class EventController extends AbstractController
         $start_at = $request->query->get('start_at');
         $end_at = $request->query->get('end_at');
 
-        $creator_entity = $entityManager->getRepository(Users::class)->find($creator_id);
+        $creator_entity = $entityManager->getRepository(Users::class)->findOneBy(['token' => $token]);
 
         $start_at = date_create_immutable_from_format('Y-m-d H:i:s', $start_at);
         $end_at = date_create_immutable_from_format('Y-m-d H:i:s', $end_at);
