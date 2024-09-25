@@ -6,6 +6,7 @@ use App\Token;
 
 use App\Entity\Events;
 use App\Entity\Users;
+use App\Entity\Reservations;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class EventController extends AbstractController
 {
-    #[Route('/api/events', name: 'api_event_index')]
+    #[Route('/api/events')]
     public function index(EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {   
         $events = $entityManager->getRepository(Events::class)->findAll();
@@ -28,14 +29,13 @@ class EventController extends AbstractController
         ]);
     }
     
-    #[Route('/api/event/create', name: 'api_event_create')]
-
+    #[Route('/api/event/create')]
     public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
         $token = $request->query->get('token');
       
         if (!Token::Permission($token, 'Organization', $entityManager)){
-            return $this->json(['access_denied' => 'Bad permissions']);
+            return $this->json(['unauthorized' => 'Bad permissions'], 401);
         }
 
         $title = $request->query->get('title');
@@ -45,7 +45,7 @@ class EventController extends AbstractController
         $start_at = $request->query->get('start_at');
         $end_at = $request->query->get('end_at');
 
-        $creator_entity = $entityManager->getRepository(Users::class)->find($creator_id);
+        $creator_entity = $entityManager->getRepository(Users::class)->findOneBy(['token' => $token]);
 
         $start_at = date_create_immutable_from_format('Y-m-d H:i:s', $start_at);
         $end_at = date_create_immutable_from_format('Y-m-d H:i:s', $end_at);
@@ -55,19 +55,19 @@ class EventController extends AbstractController
             $event = new Events();
             $event->setTitle($title);
         } else {
-            return $this->json(['error' => 'bad title resquest']);
+            return $this->json(['error' => 'Bad title resquest'], 400);
         }
 
         if ($creator_entity != NULL) {
             $event->setCreatorId($creator_entity);
         } else {
-            return $this->json(['error' => 'bad creator_id resquest']);
+            return $this->json(['error' => 'Bad creator_id resquest'], 400);
         }
 
         if ($description != NULL) {
             $event->setDescription($description);
         } else {
-            return $this->json(['error' => 'bad description resquest']);
+            return $this->json(['error' => 'Bad description resquest'], 400);
         }
         
         if ($max_capacity != NULL && is_int($max_capacity)) {
@@ -81,6 +81,33 @@ class EventController extends AbstractController
         $entityManager->persist($event);
         $entityManager->flush();
 
-        return $this->json(['succes' => 'event created']);
+        return $this->json(['succes' => 'Event created'], 201);
+    }
+
+    #[Route('/api/event/inscription')]
+    public function inscription(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $token = $request->query->get('token');
+        $user = Token::CheckUser($token, $entityManager);
+
+        if (!$user){
+            return $this->json(['unauthorized' => 'Token not found'], 400);
+        }
+
+        $id = $request->query->get('event_id');
+        $event = $entityManager->getRepository(Events::class)->find($id);
+
+        if(!$entityManager->getRepository(Reservations::class)->findOneBy(['user_id' => $user, 'event_id' => $event])){
+            return $this->json(['unauthorized' => 'Already registered'], 400);
+        }
+
+        $reservation = new Reservations();
+        $reservation->setUserId($user);
+        $reservation->setEventId($event);
+
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+
+        return $this->json(['success' => 'Reservation complete'], 200);
     }
 }

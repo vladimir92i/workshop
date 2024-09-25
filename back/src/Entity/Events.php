@@ -190,6 +190,12 @@ class Events
         return $this->reservations;
     }
 
+    #[Groups(["event.index", "event.show"])]
+    public function isCountReservations(): Int
+    {
+        return $this->reservations->count();
+    }
+
     public function addReservation(Reservations $reservation): static
     {
         if (!$this->reservations->contains($reservation)) {

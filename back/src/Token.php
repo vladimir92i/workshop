@@ -6,13 +6,13 @@ use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Token {
-    public static function Check(string $token, EntityManagerInterface $entityManager) {
+    public static function CheckUser(string $token, EntityManagerInterface $entityManager) {
         $user = $entityManager->getRepository(Users::class)->findOneBy(['token' => $token]);
 
         if ($user == NULL){
             return false;
         } else {
-            return true;
+            return $user;
         }
     }
 

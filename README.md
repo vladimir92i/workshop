@@ -28,7 +28,7 @@ php bin/console doctrine:migrations:migrate
 ```
 
 ## Démarrer l'app
-### Démarrage
+### Démarrrage
 ```shell
 symfony local:server:start
 ```
@@ -40,7 +40,7 @@ symfony local:server:start
 # Requêtes API
 ## User
 ### Index
-`/users`
+`/api/users`
 **Arguments :**
 /
 
@@ -52,7 +52,7 @@ symfony local:server:start
 ]
 
 ### Show
-`/users/show/{id}`
+`/api/users/show/{id}`
 **Arguments :**
 /
 
@@ -71,7 +71,7 @@ symfony local:server:start
 "class" : *string*
 
 **Return :**
-"succes" : "user created" 
+"succes" : "User created" 
 
 ### Connexion
 `/api/user/connexion`
@@ -81,3 +81,74 @@ symfony local:server:start
 
 **Return :**
 "token" : *string*
+
+
+### Deconnexion
+`/api/user/deconnexion`
+**Arguments :**
+"username" : *string*
+"password" : *string*
+
+**Return :**
+"succes" : "Disconnected"
+
+### Edit
+`/api/user/Edit`
+**Arguments :**
+"token" : *string*
+"mail" : *string*
+"password" : *string*
+"mail" : *string* - Option
+"username" : *siring* - Option
+"new_password" : *siring* - Option
+
+**Return :**
+"username" : *string*
+"class" : *string*
+"organization" : *string*
+"mail" : *string*
+
+## Event
+### Index
+`/api/events`
+**Arguments :**
+/
+
+**Return :**
+*Array* [
+    "id" : *integer*
+    "title" : *string*
+    "validation" : *string* or *null*
+    "creator_id" : *Array* [
+                            "username" : *string*
+                    ]
+    "max_capacity" : *integer* or *null*
+    "start_at" : *datetime AAAA-MM-JJThh-mm-ss+01:00*
+    "end_at" : *datetime AAAA-MM-JJThh-mm-ss+01:00*
+    "created_at" : *datetime AAAA-MM-JJThh-mm-ss+01:00*
+    "countReservations": *Integer*
+]
+
+### Create
+`/api/event/create`
+**Arguments :**
+    "token" : *string*
+    "id" : *integer*
+    "title" : *string*
+    "description" : *string*
+    "max_capacity" : *string* - optionnal
+    "start_at" : *datetime Y-m-d H:i:s*
+    "end_at" : *datetime Y-m-d H:i:s*
+
+**Return :**
+    "succes" => "Event created"
+
+    
+### Inscription (Reservation)
+`/api/event/inscription`
+**Arguments :**
+    "token" : *string*
+    "event_id" : *integer*
+
+**Return :**
+    "succes" => "Reservation complete"
