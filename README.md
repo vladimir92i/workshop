@@ -3,7 +3,7 @@
 ## Installation
 ```shell
 cd front
-Npm install
+npm install
 ```
 
 ## Lancement du projet
@@ -28,7 +28,7 @@ php bin/console doctrine:migrations:migrate
 ```
 
 ## Démarrer l'app
-### Démarage
+### Démarrage
 ```shell
 symfony local:server:start
 ```
