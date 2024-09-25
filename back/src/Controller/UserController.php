@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use TokenCheck;
+use App\Token;
 
 use App\Entity\Users;
 
@@ -48,18 +48,21 @@ class UserController extends AbstractController
             $user = new Users();
             $user->setUsername($username);
         } else {
-            return $this->json(['error' => 'bad username resquest']);
+            return $this->json(['error' => 'Bad username resquest']);
         }
 
         if(filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+            if($entityManager->getRepository(Users::class)->findOneBy(['mail' => $mail])){
+                return $this->json(['error' => 'Mail already use']);
+            }
             $user->setMail($mail);
-        }
+            }
 
         if ($password != NULL) {
             $password_hashed = password_hash($password . 'epsi', PASSWORD_BCRYPT, ["cost" => 4]);
             $user->setPassword($password_hashed);
         } else {
-            return $this->json(['error' => 'bad password resquest']);
+            return $this->json(['error' => 'Bad password resquest']);
         }
 
         if ($class != NULL) {
@@ -70,7 +73,7 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json(['succes' => 'user created']);
+        return $this->json(['succes' => 'User created']);
     }
 
     #[Route('/api/user/connexion')]
@@ -92,7 +95,7 @@ class UserController extends AbstractController
         if (password_verify($password.'epsi', $user->getPassword())) {
             $token = hash('sha256', date("Y-m-d H:i:s").'wis');
         } else {
-            return $this->json(['error' => 'bad password']);
+            return $this->json(['error' => 'Bad password']);
         }
 
         $user->setToken($token);
@@ -105,30 +108,17 @@ class UserController extends AbstractController
     #[Route('/api/user/deconnexion')]
     public function deconnexion(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
-        $username = $request->query->get('username');
-        $password = $request->query->get('password');
-
-        $user = $entityManager->getRepository(Users::class)->findOneBy(['username' => $username]);
-
-        if($user == NULL){
-            $user = $entityManager->getRepository(Users::class)->findOneBy(['mail' => $username]);
+        $token = $request->query->get('token');
+        $user = Token::CheckUser($token, $entityManager);
+        if (!$user){
+            return $this->json(['error' => 'Token not found']);
         }
 
-        if ($user == NULL){
-            return $this->json(['error' => 'username or mail not found']);
-        }
-
-        if (password_verify($password.'epsi', $user->getPassword())) {
-            $token = hash('sha256', date("Y-m-d H:i:s").'wis');
-        } else {
-            return $this->json(['error' => 'bad password']);
-        }
-
-        $user->setToken($token);
+        $user->setToken(NULL);
 
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json(['token' => $token]);
+        return $this->json(['success' => "Disconnected"]);
     }
 }

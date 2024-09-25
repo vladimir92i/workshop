@@ -28,7 +28,7 @@ php bin/console doctrine:migrations:migrate
 ```
 
 ## Démarrer l'app
-### Démarage
+### Démarrage
 ```shell
 symfony local:server:start
 ```
@@ -71,7 +71,7 @@ symfony local:server:start
 "class" : *string*
 
 **Return :**
-"succes" : "user created" 
+"succes" : "User created" 
 
 ### Connexion
 `/api/user/connexion`
@@ -81,3 +81,13 @@ symfony local:server:start
 
 **Return :**
 "token" : *string*
+
+
+### Connexion
+`/api/user/deconnexion`
+**Arguments :**
+"username" : *string*
+"password" : *string*
+
+**Return :**
+"succes" : "Disconnected"
