@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class UserController extends AbstractController
 {
     #[Route('api/users')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager): JsonResponse
     {
         $users = $entityManager->getRepository(Users::class)->findAll();
 
@@ -27,7 +27,7 @@ class UserController extends AbstractController
     }
     
     #[Route('api/user/show/{id}')]
-    public function show(EntityManagerInterface $entityManager, int $id): Response
+    public function show(EntityManagerInterface $entityManager, int $id): JsonResponse
     {
         $users = $entityManager->getRepository(Users::class)->find($id);
 
@@ -75,6 +75,35 @@ class UserController extends AbstractController
 
     #[Route('/api/user/connexion')]
     public function connexion(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {   
+        $username = $request->query->get('username');
+        $password = $request->query->get('password');
+
+        $user = $entityManager->getRepository(Users::class)->findOneBy(['username' => $username]);
+
+        if($user == NULL){
+            $user = $entityManager->getRepository(Users::class)->findOneBy(['mail' => $username]);
+        }
+
+        if ($user == NULL){
+            return $this->json(['error' => 'username or mail not found']);
+        }
+
+        if (password_verify($password.'epsi', $user->getPassword())) {
+            $token = hash('sha256', date("Y-m-d H:i:s").'wis');
+        } else {
+            return $this->json(['error' => 'bad password']);
+        }
+
+        $user->setToken($token);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->json(['token' => $token]);
+    }
+    #[Route('/api/user/deconnexion')]
+    public function deconnexion(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {   
         $username = $request->query->get('username');
         $password = $request->query->get('password');
