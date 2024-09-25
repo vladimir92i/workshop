@@ -25,14 +25,14 @@ class EventController extends AbstractController
     }
     
     #[Route('/api/event/create', name: 'api_event_create')]
-    public function create(): JsonResponse
+    public function create($entityManager): JsonResponse
     {   
 
         $event = new Events();
         $event->setTitle('Nom de l\'event');
         $event->setDescription('Blablablabla');
         $event->setValidation(NULL);
-        $event->setMax_Capacity(90);
+        $event->setMaxCapacity(90);
         // $event->setStartAt()
 
         // tell Doctrine you want to (eventually) save the event (no queries yet)
