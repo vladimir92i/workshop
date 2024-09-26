@@ -6,6 +6,7 @@ use App\Token;
 
 use App\Entity\Events;
 use App\Entity\Users;
+use App\Entity\Room;
 use App\Entity\Reservations;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -109,5 +110,32 @@ class EventController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['success' => 'Reservation complete'], 200);
+    }
+    #[Route('api/event/admin')]
+    public function admin(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $token = $request->query->get('token');
+        $user = $user = Token::Permission($token, 'Admin', $entityManager);
+
+        if(!$user){
+            return $this->json(['unauthorized' => 'Bad permissions'], 401);
+        }
+
+        $event_id = $request->query->get('event_id');
+        $classroom_id = $request->query->get('classroom_id');
+        $validation = $request->query->get('event_validation');
+
+        $event = $entityManager->getRepository(Events::class)->find($event_id);
+        $classroom = $entityManager->getRepository(Room::class)->find($classroom_id);
+
+        $event->setValidation($validation);
+        $event->setRoomId($classroom);
+        $event->setControlId($user);
+
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        return $this->json(['success' => 'Update complete'], 200);
+
     }
 }
