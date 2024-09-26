@@ -152,3 +152,14 @@ symfony local:server:start
 
 **Return :**
     "succes" => "Reservation complete"
+    
+### Contrôle de l'event (admin)
+`/api/event/admin`
+**Arguments :**
+    "token" : *string*
+    "event_id" : *integer*
+    "classroom_id" : *integer* - optionnal
+    "event_validation" : *string* - optionnal
+
+**Return :**
+    "succes" => "Update complete"

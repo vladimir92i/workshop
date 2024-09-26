@@ -136,6 +136,5 @@ class EventController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['success' => 'Update complete'], 200);
-
     }
 }
