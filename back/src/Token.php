@@ -24,7 +24,7 @@ class Token {
         } else if ($user->getStatus() != $role){
             return false;
         } else {
-            return true;
+            return $user;
         }
     }
 }
