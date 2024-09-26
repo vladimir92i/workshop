@@ -18,7 +18,7 @@ class RoomController extends AbstractController
     public function index(EntityManagerInterface $entityManager): JsonResponse
     {
         $rooms = $entityManager->getRepository(Room::class)->findAll();
-
+        
         return $this->json($rooms, 200, [], [
             'groups' => ['room.index']
         ]);

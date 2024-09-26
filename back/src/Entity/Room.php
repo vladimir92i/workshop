@@ -23,7 +23,7 @@ class Room
     private ?string $name = null;
 
     #[ORM\Column(length: 15)]
-    #[Groups("room.show")]
+    #[Groups(["room.index","room.show"])]
     private ?string $floor = null;
 
     #[ORM\Column(nullable: true)]
