@@ -1,36 +1,70 @@
-import '../css/style.css'
-import image from '../img/frontImg.jpg'
+import { useState } from "react"
+import "../../css/style.css"
+import image from "../../img/frontImg.jpg"
 
+interface ConnexionProps {
+    onUserChange: (user: string, password: string) => void
+}
 
-export default function Connexion() {
+export default function Connexion({ onUserChange }: ConnexionProps) {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value)
+    }
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value)
+    }
+
+    const onButtonClick = (e: React.MouseEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        onUserChange(email, password)
+    }
+
     return (
-        <div class="container">
-            <input type="checkbox" id="flip"/>
-            <div class="cover">
-                <div class="front">
-                    <img src={image} alt=""/>
-                        <div class="text">
-                            <span class="text-1">Connecter vous pour crée un évènement</span>
-                            <span class="text-2">Workshop Epsi</span>
-                        </div>
+        <div className="container">
+            <input type="checkbox" id="flip" />
+            <div className="cover">
+                <div className="front">
+                    <img src={image} alt="" />
+                    <div className="text">
+                        <span className="text-1">
+                            Connecter vous pour créer un évènement
+                        </span>
+                        <span className="text-2">Workshop Epsi</span>
+                    </div>
                 </div>
             </div>
-            <div class="forms">
-                <div class="form-content">
-                    <div class="login-form">
-                        <div class="title">Connecter-Vous</div>
-                        <form action="#">
-                            <div class="input-boxes">
-                                <div class="input-box">
-                                    <i class="fas fa-envelope"></i>
-                                    <input type="email" placeholder="Entrer votre email" required/>
+            <div className="forms">
+                <div className="form-content">
+                    <div className="login-form">
+                        <div className="title">Connexion</div>
+                        <form>
+                            <div className="input-boxes">
+                                <div className="input-box">
+                                    <input
+                                        type="text"
+                                        placeholder="Email"
+                                        value={email}
+                                        onChange={handleEmailChange}
+                                    />
                                 </div>
-                                <div class="input-box">
-                                    <i class="fas fa-lock"></i>
-                                    <input type="password" placeholder="Entrer votre mot de passe" required/>
+                                <div className="input-box">
+                                    <input
+                                        type="password"
+                                        placeholder="Mot de passe"
+                                        value={password}
+                                        onChange={handlePasswordChange}
+                                    />
                                 </div>
-                                <div class="button input-box">
-                                    <input type="submit" value="Connexion"/>
+                                <div className="button input-box">
+                                    <input
+                                        onClick={onButtonClick}
+                                        type="submit"
+                                        value="Connexion"
+                                    />
                                 </div>
                             </div>
                         </form>
